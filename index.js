@@ -1,17 +1,14 @@
-/*
-    [] Conectar a la DB
-*/
 'use strict'
-
+require('dotenv').config();
 const mongoose = require('mongoose');
 const app = require('./app');
-const port = 3900;
+const port = process.env.PORT || 3900;
 
 mongoose.set('useFindAndModify', false);
 mongoose.Promise = global.Promise;
 
 //mongoose.connect(url, opciones).then( ()=>{})
-mongoose.connect('mongodb://localhost:27017/api_rest_blog', {
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/api_rest_blog', {
         useNewUrlParser: true,
         useUnifiedTopology: true
     })
