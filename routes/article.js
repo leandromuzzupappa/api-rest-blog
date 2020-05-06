@@ -13,7 +13,7 @@ const router = express.Router();
 
 // Rutas de prueba
 router.get('/test-de-controlador', ArticleController.test);
-router.post('/datos-autor', ArticleController.datosAutor);
+router.get('/datos-autor', ArticleController.datosAutor);
 
 // Rutas para articulos
 router.post('/save', ArticleController.save);
