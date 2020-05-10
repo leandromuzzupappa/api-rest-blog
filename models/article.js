@@ -13,11 +13,12 @@ const ArticleSchema = Schema({
     category: String,
     image: String,
     status: Boolean,
+    featured: Boolean,
     date: {
         type: Date,
         default: Date.now
     },
-    author: String
+    author: String,
 
 
 });
