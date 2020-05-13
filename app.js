@@ -9,6 +9,7 @@ const app = express();
 
 // Cargar rutas
 const ArticleRoutes = require('./routes/article');
+const CategoryRoutes = require('./routes/category');
 
 // Middlewares
 app.use(bodyparser.urlencoded({
@@ -30,6 +31,7 @@ app.use((req, res, next) => {
 
 // Añadir prefijos a rutas / cargar rutas
 app.use('/api', ArticleRoutes);
+app.use('/api', CategoryRoutes);
 
 
 

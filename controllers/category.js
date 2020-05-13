@@ -1,40 +1,19 @@
-'use stict'
+'use strict'
 
 const validator = require('validator');
-const Article = require('../models/article');
+const Category = require('../models/category');
 const fs = require('fs');
 const path = require('path');
 
-
 const controller = {
-
-    datosAutor: (req, res) => {
-        return res.status(200).send({
-            nombre: 'Leandro Muzzupappa',
-            web: 'leandromuzzupappa.github.io',
-            email: 'lnmuzzupappa@gmail.com'
-        })
-    },
-    test: (req, res) => {
-        return res.status(200).send({
-            message: 'Esta es una respuesta del metodo test del controlador'
-        })
-    },
-
     save: (req, res) => {
         // Traer parametros por post
         const params = req.body;
-        let validateTitle, validateBrief, validateContent, validateCategory, validateStatus, validateFeatured, validateAuthor;
+        let validateName;
 
         // Validar datos
         try {
-            validateTitle = !validator.isEmpty(params.title);
-            validateBrief = !validator.isEmpty(params.brief);
-            validateContent = !validator.isEmpty(params.content);
-            validateCategory = !validator.isEmpty(params.category);
-            validateStatus = !validator.isEmpty(params.status);
-            validateFeatured = !validator.isEmpty(params.featured);
-            validateAuthor = !validator.isEmpty(params.author);
+            validateName = !validator.isEmpty(params.name);
 
         } catch (err) {
             return res.status(400).send({
@@ -42,33 +21,27 @@ const controller = {
                 message: 'Faltan datos por enviar.'
             })
         }
-        if (validateTitle && validateBrief && validateContent && validateCategory && validateStatus && validateFeatured && validateAuthor) {
+        if (validateName) {
             // Crear el objeto a guardar
-            const article = new Article();
+            const category = new Category();
 
             // Asignar valores
-            article.title = params.title;
-            article.brief = params.brief;
-            article.content = params.content;
-            article.category = params.category;
-            article.image = null;
-            article.status = params.status;
-            article.featured = params.featured;
-            article.author = params.author;
+            category.name = params.name;
+            category.image = null;
 
             // Guardar el articulo
-            article.save((err, articleStored) => {
-                if (err || !articleStored) {
+            category.save((err, categoryStored) => {
+                if (err || !categoryStored) {
                     return res.status(400).send({
                         status: 'error',
-                        message: 'El articulo no pudo ser procesado.'
+                        message: 'La categoria no pudo ser procesada.'
                     });
                 }
 
                 // Devolver una respuesta
                 return res.status(200).send({
                     status: 'success',
-                    article: articleStored
+                    article: categoryStored
                 })
             })
         } else {
@@ -79,88 +52,70 @@ const controller = {
         }
     },
 
-    // traer todos los articulos, o los que quiera
-    getArticles: (req, res) => {
-
-        let query = Article.find({});
-
-        // Si existe last?
+    getCategories: (req, res) => {
+        let query = Category.find({});
         let last = req.params.last;
+
         if (last || last != undefined) {
             query.limit(parseInt(last));
         }
 
         // Find
-        query.sort('-_id').exec((err, articles) => {
+        query.sort('-_id').exec((err, categories) => {
             if (err) {
                 return res.status(500).send({
                     status: 'error',
-                    message: 'Hubo un error al traer los articulos.' + err
+                    message: 'Hubo un error al traer las categorias.' + err
                 })
             }
-            if (!articles || articles == 0) {
+            if (!categories || categories == 0) {
                 return res.status(404).send({
                     status: 'error',
-                    message: 'No se han encontrado articulos.'
+                    message: 'No se han encontrado categorias.'
                 })
             }
             return res.status(200).send({
                 status: 'success',
-                articles
+                categories
             });
         });
-
-
     },
+    getCategory: (req, res) => {
+        const categoryId = req.params.id;
 
-    getArticle: (req, res) => {
-        // traer el id de la url
-        const articleId = req.params.id;
-
-        // comprobar que existe 
-        if (!articleId || articleId == null) {
+        if (!categoryId || categoryId == null) {
             return res.status(400).send({
                 status: 'error',
                 message: 'No se ha encontrado el ID o el ID es nulo.'
             })
         }
 
-        // buscar el articulo
-        Article.findById(articleId, (err, article) => {
-            // error o esta mal el id - 404
-            if (err || !article) {
+        // buscar categoria
+        Category.findById(categoryId, (err, category) => {
+            if (err || !category) {
                 return res.status(204).send({
                     status: 'error',
-                    message: 'No se encontró el articulo o el articulo no existe.'
+                    message: 'No se encontró la categoria o la categoria no existe.'
                 })
             }
 
             // devolver un resultado
             return res.status(200).send({
                 status: 'success',
-                article
+                category
             })
         })
+
     },
 
     update: (req, res) => {
-        // traer el id de la url
-        const articleId = req.params.id;
-
-        // traer los datos que llegan por put
+        const categoryId = req.params.id;
         const params = req.body;
 
-        // Validar los datos
-        let validateTitle, validateBrief, validateContent, validateCategory, validateStatus, validateFeatured, validateAuthor;
+        let validateName;
         // Validar datos
         try {
-            validateTitle = !validator.isEmpty(params.title);
-            validateBrief = !validator.isEmpty(params.brief);
-            validateContent = !validator.isEmpty(params.content);
-            validateCategory = !validator.isEmpty(params.category);
-            validateStatus = !validator.isEmpty(params.status);
-            validateFeatured = !validator.isEmpty(params.featured);
-            validateAuthor = !validator.isEmpty(params.author);
+            validateName = !validator.isEmpty(params.name);
 
         } catch (err) {
             return res.status(400).send({
@@ -169,30 +124,30 @@ const controller = {
             })
         }
 
-        if (validateTitle && validateBrief && validateContent && validateCategory && validateStatus && validateFeatured && validateAuthor) {
+        if (validateName) {
 
             // Si es valido -> finoneandupdate()
-            Article.findOneAndUpdate({
-                _id: articleId
+            Category.findOneAndUpdate({
+                _id: categoryId
             }, params, {
                 new: true
-            }, (err, articleUpdated) => {
+            }, (err, categoryUpdated) => {
                 if (err) {
                     return res.status(400).send({
                         status: 'error',
-                        message: 'No se puede actualizar el articulo. ' + err
+                        message: 'No se puede actualizar la categoria. ' + err
                     })
                 }
-                if (!articleUpdated) {
+                if (!categoryUpdated) {
                     return res.status(404).send({
                         status: 'error',
-                        message: 'No existe el articulo.'
+                        message: 'No existe la categoria.'
                     });
                 }
 
                 return res.status(200).send({
                     status: 'success',
-                    article: articleUpdated
+                    category: categoryUpdated
                 })
 
             });
@@ -204,40 +159,32 @@ const controller = {
             })
         }
     },
-
     delete: (req, res) => {
-        // traer el id de la url
-        const articleId = req.params.id;
+        const categoryId = req.params.id;
 
-        // find and delete
         Article.findOneAndDelete({
-            _id: articleId
-        }, (err, articleRemoved) => {
+            _id: categoryId
+        }, (err, categoryRemoved) => {
             if (err) {
                 return res.status(400).send({
                     status: 'error',
-                    message: 'Hubo un error al borrar el articulo.'
+                    message: 'Hubo un error al borrar la categoria.'
                 })
             }
-            if (!articleRemoved) {
+            if (!categoryRemoved) {
                 return res.status(500).send({
                     status: 'error',
-                    message: 'No se encontro articulo para borrar'
+                    message: 'No se encontro categoria para borrar'
                 })
             }
 
             return res.status(200).send({
                 status: 'success',
-                article: articleRemoved
+                category: categoryRemoved
             })
         })
     },
-
     upload: (req, res) => {
-        // configurara el modulo de connect multiparty en el router
-        // el key a subir se tiene que llamar file0
-
-        // trare el archivo
         let fileName = 'Imagen no subida...';
 
         if (!req.files) {
@@ -269,16 +216,15 @@ const controller = {
             });
 
         } else {
-            // Si se valida todo buscara rticulo, asignar imagen y actualizar
-            const articleId = req.params.id;
-            Article.findOneAndUpdate({
-                _id: articleId
+            const categoryId = req.params.id;
+            Category.findOneAndUpdate({
+                _id: categoryId
             }, {
                 image: fileName
             }, {
                 new: true
-            }, (err, articleUpdated) => {
-                if (err || !articleUpdated) {
+            }, (err, categoryUpdated) => {
+                if (err || !categoryUpdated) {
                     return res.status(404).send({
                         status: 'error',
                         message: 'Hubo un error al borrar el archivo.'
@@ -287,7 +233,7 @@ const controller = {
 
                 return res.status(200).send({
                     status: 'success',
-                    article: articleUpdated
+                    category: categoryUpdated
                 })
             });
         }
@@ -295,7 +241,7 @@ const controller = {
 
     getImage: (req, res) => {
         const file = req.params.image;
-        const filePath = './upload/articles/' + file;
+        const filePath = './upload/categories/' + file;
 
         fs.exists(filePath, (exists) => {
             if (exists) {
@@ -309,65 +255,43 @@ const controller = {
             }
         })
     },
-
     search: (req, res) => {
         // string abuscar
         const searchString = req.params.search;
 
         // find or
-        Article.find({
+        Category.find({
                 $or: [{
-                        "title": {
-                            "$regex": searchString,
-                            "$options": "i"
-                        }
-                    },
-                    {
-                        "brief": {
-                            "$regex": searchString,
-                            "$options": "i"
-                        }
-                    },
-                    {
-                        "content": {
-                            "$regex": searchString,
-                            "$options": "i"
-                        }
-                    },
-                    {
-                        "category": {
-                            "$regex": searchString,
-                            "$options": "i"
-                        }
+                    "name": {
+                        "$regex": searchString,
+                        "$options": "i"
                     }
-                ]
+                }, ]
             })
             .sort([
                 ['date', 'descending']
             ])
-            .exec((err, articles) => {
+            .exec((err, categories) => {
                 if (err) {
                     return res.status(500).send({
                         status: 'error',
                         message: 'Error en la peticion' + err
                     })
                 }
-                if (!articles || articles.length <= 0) {
+                if (!categories || categories.length <= 0) {
                     return res.status(204).send({
                         status: 'error',
-                        message: 'No hay articulos que coincidan con la busqueda',
-                        articles
+                        message: 'No hay categorias que coincidan con la busqueda',
+                        categories
                     })
                 }
 
                 return res.status(200).send({
                     status: 'success',
-                    articles
+                    categories
                 })
             })
     }
-
-
-};
+}
 
 module.exports = controller;
