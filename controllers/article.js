@@ -128,7 +128,7 @@ const controller = {
         Article.findById(articleId, (err, article) => {
             // error o esta mal el id - 404
             if (err || !article) {
-                return res.status(404).send({
+                return res.status(204).send({
                     status: 'error',
                     message: 'No se encontró el articulo o el articulo no existe.'
                 })
@@ -351,9 +351,10 @@ const controller = {
                     })
                 }
                 if (!articles || articles.length <= 0) {
-                    return res.status(404).send({
+                    return res.status(204).send({
                         status: 'error',
-                        message: 'No hay articulos que coincidan con la busqueda'
+                        message: 'No hay articulos que coincidan con la busqueda',
+                        articles
                     })
                 }
 
