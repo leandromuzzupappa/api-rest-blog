@@ -162,7 +162,7 @@ const controller = {
     delete: (req, res) => {
         const categoryId = req.params.id;
 
-        Article.findOneAndDelete({
+        Category.findOneAndDelete({
             _id: categoryId
         }, (err, categoryRemoved) => {
             if (err) {
