@@ -163,9 +163,9 @@ const controller = {
             validateAuthor = !validator.isEmpty(params.author);
 
         } catch (err) {
-            return res.status(400).send({
+            return res.status(500).send({
                 status: 'error',
-                message: 'Faltan datos por enviar.'
+                message: 'Faltan datos por enviar.' + err
             })
         }
 
@@ -200,7 +200,7 @@ const controller = {
         } else {
             return res.status(400).send({
                 status: 'error',
-                message: 'No se pudo validar los datos.'
+                message: 'No se pudo validar los datos.' + err
             })
         }
     },

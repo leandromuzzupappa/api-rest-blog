@@ -16,7 +16,7 @@ const NewsletterRoutes = require('./routes/newsletter');
 app.use(bodyparser.urlencoded({
     extended: false
 }));
-app.use(bodyparser.json({limit: '30mb'}));
+app.use(bodyparser.json({limit: '200mb'}));
 
 
 // CORS
