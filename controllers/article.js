@@ -149,7 +149,7 @@ const controller = {
 
         // traer los datos que llegan por put
         const params = req.body;
-
+        console.log('aaaaaaaaaaaaaaaaaaaaaaaa')
         // Validar los datos
         let validateTitle, validateBrief, validateContent, validateCategory, validateStatus, validateFeatured, validateAuthor;
         // Validar datos
@@ -165,7 +165,8 @@ const controller = {
         } catch (err) {
             return res.status(500).send({
                 status: 'error',
-                message: 'Faltan datos por enviar.' + err
+                message: 'Faltan datos por enviar.' + err,
+                params: params
             })
         }
 
