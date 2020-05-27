@@ -11,12 +11,15 @@ const app = express();
 const ArticleRoutes = require('./routes/article');
 const CategoryRoutes = require('./routes/category');
 const NewsletterRoutes = require('./routes/newsletter');
+const MailerRoutes = require('./routes/mailer');
 
 // Middlewares
 app.use(bodyparser.urlencoded({
     extended: false
 }));
-app.use(bodyparser.json({limit: '200mb'}));
+app.use(bodyparser.json({
+    limit: '200mb'
+}));
 
 
 // CORS
@@ -34,6 +37,7 @@ app.use((req, res, next) => {
 app.use('/api', ArticleRoutes);
 app.use('/api', CategoryRoutes);
 app.use('/api/newsletter', NewsletterRoutes);
+app.use('/mailing/', MailerRoutes);
 
 
 
