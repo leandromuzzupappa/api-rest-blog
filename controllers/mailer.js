@@ -40,7 +40,7 @@ const controller = {
         const mailOptions = {
             from: params.nombre + ' <' + params.email + '>',
             replyTo: params.email,
-            to: 'leandro@latribucreativa.com, mavi@latribucreativa.com',
+            to: 'leandro@latribucreativa.com',
             subject: 'Nueva consulta desde Generadores Tv',
             html: maquetado,
         };
