@@ -11,7 +11,7 @@ const app = express();
 const ArticleRoutes = require('./routes/article');
 const CategoryRoutes = require('./routes/category');
 const NewsletterRoutes = require('./routes/newsletter');
-const MailerRoutes = require('./routes/mailer');
+const MailerRoutes = require('./routes/emailer');
 
 // Middlewares
 app.use(bodyparser.urlencoded({
@@ -37,7 +37,7 @@ app.use((req, res, next) => {
 app.use('/api', ArticleRoutes);
 app.use('/api', CategoryRoutes);
 app.use('/api/newsletter', NewsletterRoutes);
-app.use('/mailing/', MailerRoutes);
+app.use('/api/mailing', MailerRoutes);
 
 
 
