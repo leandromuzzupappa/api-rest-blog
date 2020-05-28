@@ -39,7 +39,7 @@ const controller = {
 
         console.log('seteando mail options');
         var mailOptions = {
-            from: `${nombre} <${email}>`,
+            from: `${nombre}`,
             replyTo: `${email}`,
             to: 'leandro@latribucreativa.com',
             subject: 'Nueva consulta desde Generadores Tv',
