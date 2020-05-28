@@ -31,7 +31,6 @@ const controller = {
 
         let fecha = getFecha();
         let senderIp = os.networkInterfaces();
-        senderIp = senderIp['en0'][1];
         let nombre = params.nombre;
         let email = params.email;
         let mensaje = params.mensaje;
