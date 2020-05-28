@@ -3,6 +3,14 @@
 const nodemailer = require('nodemailer');
 const os = require('os');
 
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'formularios.latribu@gmail.com',
+        pass: '123LTC$$'
+    }
+});
+
 const getFecha = () => {
     var date = new Date();
     var year = date.getFullYear();
@@ -19,18 +27,7 @@ const getFecha = () => {
 
 const controller = {
     sendMailcito: (req, res) => {
-        console.log('inicio');
         const params = req.body;
-        console.log(params);
-
-        console.log('creando transporter');
-        var transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: 'formularios.latribu@gmail.com',
-                pass: '123LTC$$'
-            }
-        });
 
         let fecha = getFecha();
         let senderIp = os.networkInterfaces();
@@ -38,19 +35,14 @@ const controller = {
         let email = params.email;
         let mensaje = params.mensaje;
 
-        console.log(fecha, '---', senderIp, '---', nombre, '---', email, '---', mensaje, '---');
 
-        console.log('seteando mail options');
-        var mailOptions = {
-            from: `${params.nombre}`,
-            //replyTo: `${email}`,
+        transporter.sendMail({
+            from: `${params.nombre} <${params.email}>`,
+            replyTo: `${email}`,
             to: 'leandro@latribucreativa.com',
             subject: 'Nueva consulta desde Generadores Tv',
             html: `<table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#e4e4e4" valign="top" style="border-collapse:collapse;margin:0;padding:0"><tr><td height="20"></td></tr><tr><td width="100%" align="center" style="font-family:Arial,Helvetica,sans-serif"><table width="800" cellspacing="0" cellpadding="0" border="0" bgcolor="#FFFFFF" valign="top" style="border-collapse:collapse"><tr><td width="100%" bgcolor="#FFFFFF"><table width="100%" cellspacing="0" cellpadding="0"><tr><td height="30" colspan="3"></td></tr><tr><td width="20"></td><td><a href="https://www.generadores.tv"><img src="https://i.imgur.com/fuXnacP.png" alt="Generadores Tv" style="border:0;display:block;width:200px"></a></td><td width="20"></td></tr><tr><td height="30" colspan="3"></td></tr></table></td></tr><tr><td width="100%" bgcolor="#21849b"><table width="100%" cellspacing="0" cellpadding="0"><tr><td height="10" colspan="3"></td></tr><tr><td width="20"></td><td align="center" style="font-family:Arial,Helvetica,sans-serif;font-weight:400;font-size:16px;line-height:22px;color:#fff;text-transform:uppercase">Nueva consulta recibida.<br>${fecha}</td><td width="20"></td></tr><tr><td height="10" colspan="3"></td></tr></table></td></tr><tr><td width="100%" bgcolor="#ffffff"><table width="100%" cellspacing="0" cellpadding="0"><tr><td height="30" colspan="3"></td></tr><tr><td width="20"></td><td style="font-family:Arial,Helvetica,sans-serif;font-weight:400;font-size:16px;color:#1a1a1a"><strong>Nombre y Apellido:</strong> ${nombre}</td><td width="20"></td></tr><tr><td height="30" colspan="3"></td></tr><tr><td height="1" colspan="3" bgcolor="#cccccc"></td></tr></table></td></tr><tr><td width="100%" bgcolor="#ffffff"><table width="100%" cellspacing="0" cellpadding="0"><tr><td height="30" colspan="3"></td></tr><tr><td width="20"></td><td style="font-family:Arial,Helvetica,sans-serif;font-weight:400;font-size:16px;color:#1a1a1a"><strong>Email:</strong> <a href="mailto:${email}" target="_blank" style="text-decoration:none;color:#d60f1b">${email}</a></td><td width="20"></td></tr><tr><td height="30" colspan="3"></td></tr><tr><td height="1" colspan="3" bgcolor="#cccccc"></td></tr></table></td></tr><tr><td width="100%" bgcolor="#ffffff"><table width="100%" cellspacing="0" cellpadding="0"><tr><td height="30" colspan="3"></td></tr><tr><td width="20"></td><td style="font-family:Arial,Helvetica,sans-serif;font-weight:400;font-size:16px;color:#1a1a1a"><strong>Mensaje:</strong><br>${mensaje}</td><td width="20"></td></tr><tr><td height="50" colspan="3"></td></tr><tr><td height="1" colspan="3" bgcolor="#cccccc"></td></tr></table></td></tr><tr><td width="100%" bgcolor="#c8d6e5"><table width="100%" cellspacing="0" cellpadding="0"><tr><td height="10" colspan="3"></td></tr><tr><td width="20"></td><td align="center" style="font-family:Arial,Helvetica,sans-serif;font-weight:400;font-size:12px;color:#1a1a1a;letter-spacing:.5px;line-height:16px">Mensaje recibido el dia ${fecha}<br>||| La IP grabada es: ${senderIp['en0'][1]}</td><td width="20"></td></tr><tr><td height="10" colspan="3"></td></tr><tr><td height="1" colspan="3" bgcolor="#cccccc"></td></tr></table></td></tr></table></td></tr><tr><td height="20"></td></tr></table>`,
-        };
-        console.log('enviando email');
-
-        transporter.sendMail(mailOptions, function (error, info) {
+        }, function (error, info) {
             if (error) {
                 console.log('error transporter');
 
